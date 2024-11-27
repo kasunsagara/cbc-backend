@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 
 const app = express();
 
-const mongoUrl = "mongodb+srv://admin:123@cluster0.qaefe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongoUrl = "mongodb+srv://kasunsagara689:3UVCy1xW4TcMtrhr@cluster0.ppuge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(mongoUrl,{});
 
