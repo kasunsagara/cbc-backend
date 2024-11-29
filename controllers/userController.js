@@ -5,30 +5,31 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export function createUser(req, res) {
+export async function createUser(req, res) {
 
     const newUserData = req.body;
 
-    newUserData.password = bcrypt.hashSync(newUserData.password, 10);
+    newUserData.password = await bcrypt.hash(newUserData.password, 10);
 
     const user = new User(newUserData);
 
-    user.save()
-    .then(() => {
+    try {
+        await user.save();
         res.json({
             message: "User created"
         })
-    }).catch(() => {
+    } catch {
         res.json({
             message: "User not created"
         })
-    })
+    }
 }
 
-export function loginUser(req, res) {
+export async function loginUser(req, res) {
 
-    User.find({email: req.body.email})
-    .then((users) => {
+    try {
+        const users = await User.find({email: req.body.email});
+
         if(users.length == 0) {
             res.json({
                 message: "User not found"
@@ -58,5 +59,11 @@ export function loginUser(req, res) {
                 })
             }
         }
-    })
+    } catch {
+        res.json({
+            message: "User not logged in"
+        })
+    }
 }
+
+

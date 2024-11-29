@@ -15,70 +15,72 @@ export async function getProduct(req, res) {
     }
 }
 
-export function getProductByName(req, res) {
-    
+export async function getProductByName(req, res) {
     const name = req.params.name;
 
-    Product.find({name: name})
-    .then((productList) => {
-        if(productList.length == 0) {
+    try {
+        const productList = await Product.find({ name: name });
+        if (productList.length === 0) {
             res.json({
                 message: "Product not found"
-            })
+            });
         } else {
             res.json({
                 list: productList
-            })
+            });
         }
-    }).catch(() => {    
+    } catch (error) {
         res.json({
             message: "Product not found"
-        })
-    })
+        });
+    }
 }
 
-export function createProduct(req, res) {
+export async function createProduct(req, res) {
 
     console.log(req.user);
 
-   if(req.user == null) {
+    if (req.user == null) {
         res.json({
             message: "You are not logged in"
-        })
+        });
         return;
     }
 
-    if(req.user.type != "admin") {
+    if (req.user.type != "admin") {
         res.json({
             message: "You are not an admin"
-        })
+        });
         return;
     }
 
-    const product = new Product(req.body);
+    try {
+        const product = new Product(req.body);
 
-    product.save()
-    .then(() => {
+        await product.save();
+
         res.json({
             message: "Product created"
-        })
-    }).catch(() => {
+        });
+    } catch (error) {
         res.json({
             message: "Product not created"
-        })
-    })
+        });
+    }
 }
 
-export function deleteProduct(req, res) {
 
-    Product.deleteOne({name: req.params.name})
-    .then(() => {
+export async function deleteProduct(req, res) {
+
+    try {
+        await Product.deleteOne({name: req.params.name});
+
         res.json({
             message: "Product deleted successfully"
-        })
-    }).catch(() => {
+        });
+    } catch (error) {
         res.json({
             message: "Product not deleted"
-        })
-    })
+        });
+    }
 }
