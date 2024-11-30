@@ -23,7 +23,7 @@ connection.once("open", () => {
 app.use(bodyParser.json());
 
 app.use(
-
+    
     (req, res, next) => {
 
         const token = req.header("Authorization")?.replace("Bearer ", "");

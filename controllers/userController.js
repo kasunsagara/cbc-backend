@@ -18,7 +18,7 @@ export async function createUser(req, res) {
         res.json({
             message: "User created"
         })
-    } catch {
+    } catch (e) {
         res.json({
             message: "User not created"
         })
@@ -59,7 +59,7 @@ export async function loginUser(req, res) {
                 })
             }
         }
-    } catch {
+    } catch (e) {
         res.json({
             message: "User not logged in"
         })

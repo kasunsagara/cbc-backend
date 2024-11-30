@@ -3,7 +3,7 @@ import Product from "../models/product.js";
 export async function getProduct(req, res) {
 
     try {
-        const productList = await Product.find()
+        const productList = await Product.find();
 
         res.json({
             list: productList
@@ -16,10 +16,11 @@ export async function getProduct(req, res) {
 }
 
 export async function getProductByName(req, res) {
+
     const name = req.params.name;
 
     try {
-        const productList = await Product.find({ name: name });
+        const productList = await Product.find({name: name});
         if (productList.length === 0) {
             res.json({
                 message: "Product not found"
@@ -29,9 +30,9 @@ export async function getProductByName(req, res) {
                 list: productList
             });
         }
-    } catch (error) {
+    } catch (e) {
         res.json({
-            message: "Product not found"
+            message: "Product fetch failed"
         });
     }
 }
@@ -62,7 +63,7 @@ export async function createProduct(req, res) {
         res.json({
             message: "Product created"
         });
-    } catch (error) {
+    } catch (e) {
         res.json({
             message: "Product not created"
         });
@@ -78,7 +79,7 @@ export async function deleteProduct(req, res) {
         res.json({
             message: "Product deleted successfully"
         });
-    } catch (error) {
+    } catch (e) {
         res.json({
             message: "Product not deleted"
         });
