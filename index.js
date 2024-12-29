@@ -16,7 +16,7 @@ const mongoUrl = process.env.MONGO_DB_URI;
 
 app.use(cors());
 
-mongoose.connect(mongoUrl,{});
+mongoose.connect(mongoUrl,{})
 
 const connection = mongoose.connection;
 
