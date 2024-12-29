@@ -36,3 +36,26 @@ export async function getProducts(req, res) {
         });
     }
 }
+
+export async function deleteProduct(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Please login as administrator to delete products",
+        });
+        return;
+    }
+
+    const productId = req.params.productId;
+
+    try {
+        await Product.deleteOne({ productId: productId });
+        res.json({
+            message: "Product deleted",
+        });
+    } catch (error) {
+        res.status(403).json({
+            message: error
+        });
+    }
+}
+
