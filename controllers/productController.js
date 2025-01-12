@@ -59,7 +59,7 @@ export async function deleteProduct(req, res) {
     }
 }
 
-export function updateProduct(req, res) {
+export async function updateProduct(req, res) {
     if (!isAdmin(req)) {
         res.status(403).json({
             message: "Please login as administrator to update products"
@@ -70,16 +70,31 @@ export function updateProduct(req, res) {
     const productId = req.params.productId;
     const newProductData = req.body;
 
-    Product.updateOne({productId: productId}, newProductData)
-        .then(() => {
-            res.json({
-                message: "Product updated"
-            });
-        })
-        .catch((error) => {
-            res.status(403).json({
-                message: error
-            });
+    try {
+        await Product.updateOne({ productId: productId }, newProductData);
+        res.json({
+            message: "Product updated"
         });
+    } catch (error) {
+        res.status(403).json({
+            message: error
+        });
+    }
+}
+
+export async function getProductById(req, res) {
+
+    try {
+        const productId = req.params.productId;
+
+        const product = await Product.findOne({productId: productId});
+
+        res.json(product);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error
+        });
+    }
 }
 
