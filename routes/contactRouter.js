@@ -1,12 +1,11 @@
 import express from 'express';
-import { submitContactForm, getAllContacts } from '../controllers/contactController.js';
+import { submitContactForm, getAllContacts, deleteContact } from '../controllers/contactController.js';
 
 const contactRouter = express.Router();
 
-// Route to handle form submission
-contactRouter.post('/submit', submitContactForm);
+contactRouter.post("/submit", submitContactForm);
+contactRouter.get("/all", getAllContacts);
+contactRouter.delete("/:name", deleteContact);
 
-// Route to fetch all contact submissions (optional, for admin or debugging)
-contactRouter.get('/all', getAllContacts);
 
 export default contactRouter;
