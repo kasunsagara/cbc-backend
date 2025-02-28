@@ -116,68 +116,107 @@ export function isCustomer(req) {
     return true;
 }
 
-export async function googleLogin(req,res){
-    console.log(req.body)
-    const token = req.body.token
-    //'https://www.googleapis.com/oauth2/v3/userinfo'
-    try{
-      const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo',{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      const email = response.data.email
-      //check if user exists
-      const usersList = await User.find({email: email})
-      if(usersList.length >0){
-        const user = usersList[0]
-        const token = jwt.sign({
-          email : user.email,
-          firstName : user.firstName,
-          lastName : user.lastName,
-          isBlocked : user.isBlocked,
-          type : user.type,
-          profilePicture : user.profilePicture
-        } , process.env.SECRET)
-        
-        res.json({
-          message: "User logged in",
-          token: token,
-          user : {
-            firstName : user.firstName,
-            lastName : user.lastName,
-            type : user.type,
-            profilePicture : user.profilePicture,
-            email : user.email
+export async function googleLoginUser(req, res) {
+  console.log(req.body);
+  const token = req.body.token;
+
+  try {
+      const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: {
+              Authorization: `Bearer ${token}`
           }
-        })
-      }else{
-        //create new user
-        const newUserData = {
+      });
+
+      const email = response.data.email;
+
+      // Check if user exists
+      const user = await User.findOne({ email: email });
+
+      if (user) {
+          // Generate JWT token
+          const token = jwt.sign(
+              {
+                  email: user.email,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  isBlocked: user.isBlocked,
+                  type: user.type,
+                  profilePicture: user.profilePicture
+              },
+              process.env.SECRET
+          );
+
+          res.json({
+              message: "User logged in",
+              token: token,
+              user: {
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  type: user.type,
+                  profilePicture: user.profilePicture,
+                  email: user.email
+              }
+          });
+      } else {
+          res.status(401).json({
+              message: "Google login failed. Please sign up first."
+          });
+      }
+  } catch (e) {
+      console.error("Google login error:", e);
+      res.status(500).json({
+          message: "Google login failed"
+      });
+  }
+}
+
+export async function googleCreateUser(req, res) {
+  console.log(req.body);
+  const token = req.body.token;
+
+  try {
+      const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+      });
+
+      const email = response.data.email;
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email: email });
+
+      if (existingUser) {
+          return res.status(400).json({
+              message: "An account with this email already exists. Please log in."
+          });
+      }
+
+      // Create new user
+      const newUser = new User({
           email: email,
           firstName: response.data.given_name,
           lastName: response.data.family_name,
           type: "customer",
-          password: "ffffff",
+          password: "google-auth",
           profilePicture: response.data.picture
-        }
-        const user = new User(newUserData)
-        user.save().then(()=>{
-          res.json({
-            message: "User created"
-          })
-        }).catch((error)=>{
-          res.json({      
-            message: "User not created"
-          })
-        })
-      }
-    }catch(e){
-      res.json({
-        message: "Google login failed"
-      })
-    }
+      });
+
+      await newUser.save();
+
+      res.status(201).json({
+          message: "User created",
+          redirect: "/login" // Frontend can use this for redirection
+      });
+
+  } catch (e) {
+      console.error("Google signup error:", e);
+      res.status(500).json({
+          message: "Google signup failed"
+      });
   }
+}
+
 
   export async function getUser(req,res){
     if(req.user == null) {
