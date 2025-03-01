@@ -226,6 +226,42 @@ export async function googleLoginUser(req, res) {
     }
 
     res.json(req.user)
-  }  
+  }
+  
+  export async function getUsers(req, res) {
+    try {
+      // Assuming you're using a User model to interact with the database
+      const users = await User.find();  // Replace this with your actual database query
+      res.json(users);
+    } catch (err) {
+      res.status(500).json({
+        message: "Error retrieving users",
+        error: err.message
+      });
+    }
+  }
+
+  export async function deleteUser(req, res) {
+    if (!isAdmin(req)) {
+        res.status(403).json({
+            message: "Please login as administrator to delete users"
+        });
+        return;
+    }
+
+    const email = req.params.email;
+
+    try {
+        await User.deleteOne({ email: email });
+        res.json({
+            message: "User deleted"
+        });
+    } catch (error) {
+        res.status(403).json({
+            message: error
+        });
+    }
+}
+  
 
 
