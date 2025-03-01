@@ -6,7 +6,6 @@ export async function submitContactForm(req, res) {
 
   const newContact = new Contact({
     name,
-    email,
     message
   });
 
