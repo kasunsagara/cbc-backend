@@ -2,11 +2,11 @@ import Contact from '../models/contact.js';
 
 // Controller function for handling form submissions
 export async function submitContactForm(req, res) {
-  const { name, email, message } = req.body;
+  const { name, comment } = req.body;
 
   const newContact = new Contact({
     name,
-    message
+    comment
   });
 
   // Save the contact form to the database
