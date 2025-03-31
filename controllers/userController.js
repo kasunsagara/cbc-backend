@@ -230,8 +230,7 @@ export async function googleLoginUser(req, res) {
   
   export async function getUsers(req, res) {
     try {
-      // Assuming you're using a User model to interact with the database
-      const users = await User.find();  // Replace this with your actual database query
+      const users = await User.find(); 
       res.json(users);
     } catch (err) {
       res.status(500).json({
