@@ -11,7 +11,7 @@ import cors from "cors";
 
 dotenv.config(); 
 
-const app = express(); 
+const app = express();  
 
 const mongoUrl = process.env.MONGO_DB_URI; 
 
